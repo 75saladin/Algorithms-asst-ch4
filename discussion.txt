@@ -1,0 +1,18 @@
+Four1:
+    My solution is Big-Theta(n). Each removal requires the shifting of between 0
+and n people in the array. M does not affect the growth rate.
+
+
+Four2:
+         | Regular:                | Lazy:
+Size_____|_at_0;____at_end;_random_|_at_0;___at_end;_random__
+1,000    | 6        0       4      | 3       2       1                     
+10,000   | 55       0       22     | 59      58      85
+100,000  | 3636     4       1805   | 5970    5913    11702
+1,000,000| 382100   11      193234 | 590491  591050  1102655
+
+  
+Lazy deletion was overwhelmingly slower at everything but deletion from 0. However, it only outsped regular deletion for small sizes of n. Lazy deletion tries to mitigate the O(n) shift-to-the-left problem of deleting from the beginning of an arraylist, but it really only delays that problem until we flush the marked deletions, where it just does the normal ArrayList.remove(). Same calls, just later. 
+Assuming we could optimize the batch deletion of many items at once, instead of just repeatedly calling super.remove() as the assignment instructs, lazy deletion might have a chance of beating regular deletion at removing from 0. 
+However, it has no chance in the other categories for the following reason: lazy deletion removes the O(n) leftward shifting problem, but introduces a new O(n) problem: finding the correct index among an array of real values and ghosts. We are forced to iterate over the array, skipping ghosts until we find the real index. This problem gets worse as we try to find values later in the array, which makes it a sort of inverted leftward-shifting problem. 
+Assuming the batch deletion method could be optimized, I conclude that we should only ever think of using lazy deletion when we are always removing from the beginning of an ArrayList. But in that situation, couldn't we just use normal deletion and pretend the beginning is the end?
